@@ -1753,7 +1753,7 @@ public class Channel implements Serializable {
 
         try {
 
-            Block parseFrom = getConfigBlock(getShuffledPeers());
+            Block parseFrom = getConfigBlock(getShuffledPeers(EnumSet.of(PeerRole.LEDGER_QUERY)));
 
             // final Block configBlock = getConfigurationBlock();
 
@@ -1868,7 +1868,7 @@ public class Channel implements Serializable {
 
     public byte[] getChannelConfigurationBytes() throws TransactionException {
         try {
-            final Block configBlock = getConfigBlock(getShuffledPeers());
+            final Block configBlock = getConfigBlock(getShuffledPeers(EnumSet.of(PeerRole.LEDGER_QUERY)));
 
             Envelope envelopeRet = Envelope.parseFrom(configBlock.getData().getData(0));
 
@@ -2381,13 +2381,6 @@ public class Channel implements Serializable {
         }
 
         return randPicks.get(RANDOM.nextInt(randPicks.size()));
-    }
-
-    private List<Peer> getShuffledPeers() {
-
-        ArrayList<Peer> peers = new ArrayList<>(getPeers());
-        Collections.shuffle(peers);
-        return peers;
     }
 
     private List<Peer> getShuffledPeers(EnumSet<PeerRole> roles) {
