@@ -355,6 +355,15 @@ public class HFClient {
     }
 
     /**
+     * newInstallPackageProposalRequest get new Install package proposal request.
+     *
+     * @return InstallProposalRequest
+     */
+    public InstallPackageProposalRequest newInstallPackageProposalRequest() {
+        return new InstallPackageProposalRequest(userContext);
+    }
+
+    /**
      * newInstantiationProposalRequest get new instantiation proposal request.
      *
      * @return InstantiateProposalRequest
@@ -651,6 +660,27 @@ public class HFClient {
 
     }
 
+    /**
+     * Send install chaincode package request proposal to peers.
+     *
+     * @param installPackageProposalRequest
+     * @param peers                  Collection of peers to install on.
+     * @return responses from peers.
+     * @throws InvalidArgumentException
+     * @throws ProposalException
+     */
+
+    public Collection<ProposalResponse> sendInstallPackageProposal(InstallPackageProposalRequest installPackageProposalRequest,
+            Collection<Peer> peers) throws ProposalException, InvalidArgumentException {
+
+        clientCheck();
+
+        installPackageProposalRequest.setSubmitted();
+        Channel systemChannel = Channel.newSystemChannel(this);
+
+        return systemChannel.sendInstallPackageProposal(installPackageProposalRequest, peers);
+
+    }
 
     private void clientCheck() throws InvalidArgumentException {
 

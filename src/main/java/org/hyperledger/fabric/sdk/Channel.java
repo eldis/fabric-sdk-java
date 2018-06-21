@@ -110,6 +110,7 @@ import org.hyperledger.fabric.sdk.helper.Utils;
 import org.hyperledger.fabric.sdk.security.certgen.TLSCertificateBuilder;
 import org.hyperledger.fabric.sdk.security.certgen.TLSCertificateKeyPair;
 import org.hyperledger.fabric.sdk.transaction.GetConfigBlockBuilder;
+import org.hyperledger.fabric.sdk.transaction.InstallPackageProposalBuilder;
 import org.hyperledger.fabric.sdk.transaction.InstallProposalBuilder;
 import org.hyperledger.fabric.sdk.transaction.InstantiateProposalBuilder;
 import org.hyperledger.fabric.sdk.transaction.JoinPeerProposalBuilder;
@@ -2182,6 +2183,42 @@ public class Channel implements Serializable {
             throw new ProposalException(e);
         }
 
+    }
+
+    /**
+     * Send install chaincode package request proposal to the channel.
+     *
+     * @param installPackageProposalRequest
+     * @param peers
+     * @return
+     * @throws ProposalException
+     * @throws InvalidArgumentException
+     */
+
+    Collection<ProposalResponse> sendInstallPackageProposal(InstallPackageProposalRequest installPackageProposalRequest, Collection<Peer> peers)
+            throws ProposalException, InvalidArgumentException {
+
+        checkChannelState();
+        checkPeers(peers);
+        if (null == installPackageProposalRequest) {
+            throw new InvalidArgumentException("InstallPackageProposalRequest is null");
+        }
+
+        try {
+            TransactionContext transactionContext = getTransactionContext(installPackageProposalRequest.getUserContext());
+            transactionContext.verify(false);  // Install will have no signing cause it's not really targeted to a channel.
+            transactionContext.setProposalWaitTime(installPackageProposalRequest.getProposalWaitTime());
+            InstallPackageProposalBuilder installPackageProposalBuilder = InstallPackageProposalBuilder.newBuilder();
+            installPackageProposalBuilder.context(transactionContext);
+            installPackageProposalBuilder.setChaincodeInputStream(installPackageProposalRequest.getChaincodeInputStream());
+
+            FabricProposal.Proposal deploymentProposal = installPackageProposalBuilder.build();
+            SignedProposal signedProposal = getSignedProposal(transactionContext, deploymentProposal);
+
+            return sendProposalToPeers(peers, signedProposal, transactionContext);
+        } catch (Exception e) {
+            throw new ProposalException(e);
+        }
     }
 
     /**
