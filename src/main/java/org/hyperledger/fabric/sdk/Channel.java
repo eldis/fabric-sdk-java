@@ -1542,8 +1542,7 @@ public class Channel implements Serializable {
                     protocol + "//" + endpoint,
                     properties);
 
-            sdPeerAddition.getChannel().addPeer(peer, createPeerOptions().setPeerRoles(
-                    EnumSet.of(PeerRole.ENDORSING_PEER, PeerRole.EVENT_SOURCE, PeerRole.LEDGER_QUERY, PeerRole.CHAINCODE_QUERY))); //application can decide on roles.
+            sdPeerAddition.getChannel().addPeer(peer, createPeerOptions().addPeerRole(PeerRole.ENDORSING_PEER));
 
             return peer;
         }
