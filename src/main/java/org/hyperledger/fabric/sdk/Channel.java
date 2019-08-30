@@ -2409,7 +2409,7 @@ public class Channel implements Serializable {
      * @throws TransactionException
      */
 
-    private Block getConfigurationBlock(TransactionContext transactionContext, Orderer orderer) throws TransactionException {
+    public Block getConfigurationBlock(TransactionContext transactionContext, Orderer orderer) throws TransactionException {
 
         logger.debug(format("getConfigurationBlock for channel %s", name));
 
