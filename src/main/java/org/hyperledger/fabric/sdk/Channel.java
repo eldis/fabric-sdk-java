@@ -2003,7 +2003,7 @@ public class Channel implements Serializable {
 
         try {
 
-            Block parseFrom = getConfigBlock(getShuffledPeers());
+            Block parseFrom = getConfigBlock(getShuffledPeers(EnumSet.of(PeerRole.LEDGER_QUERY)));
 
             // final Block configBlock = getConfigurationBlock();
 
@@ -2565,8 +2565,7 @@ public class Channel implements Serializable {
     public byte[] getChannelConfigurationBytes(User userContext) throws InvalidArgumentException, TransactionException {
         Block configBlock = null;
         try {
-
-            Collection<Peer> peers = getShuffledPeers();
+            Collection<Peer> peers = getShuffledPeers(EnumSet.of(PeerRole.LEDGER_QUERY));
 
             if (!peers.isEmpty()) { // prefer peers.
                 configBlock = getConfigBlock(getTransactionContext(userContext), new ArrayList<>(peers));
@@ -3114,13 +3113,6 @@ public class Channel implements Serializable {
         }
 
         return randPicks.get(RANDOM.nextInt(randPicks.size()));
-    }
-
-    private List<Peer> getShuffledPeers() {
-
-        ArrayList<Peer> peers = new ArrayList<>(getPeers());
-        Collections.shuffle(peers);
-        return peers;
     }
 
     private List<Peer> getShuffledPeers(EnumSet<PeerRole> roles) {
