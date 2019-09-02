@@ -2404,12 +2404,26 @@ public class Channel implements Serializable {
     /**
      * Provide the Channel's latest raw Configuration Block.
      *
+     * @param userContext The user to sign the action.
+     * @param orderer
+     * @return Channel configuration block in bytes.
+     * @throws TransactionException
+     * @throws InvalidArgumentException
+     */
+    public byte[] getConfigurationBlock(User userContext, Orderer orderer) throws TransactionException, InvalidArgumentException {
+
+        return getConfigurationBlock(getTransactionContext(userContext), orderer).toByteArray();
+    }
+
+    /**
+     * Provide the Channel's latest raw Configuration Block.
+     *
      * @param orderer
      * @return Channel configuration block.
      * @throws TransactionException
      */
 
-    public Block getConfigurationBlock(TransactionContext transactionContext, Orderer orderer) throws TransactionException {
+    private Block getConfigurationBlock(TransactionContext transactionContext, Orderer orderer) throws TransactionException {
 
         logger.debug(format("getConfigurationBlock for channel %s", name));
 
