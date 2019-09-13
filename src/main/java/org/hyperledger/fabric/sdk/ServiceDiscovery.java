@@ -329,7 +329,7 @@ public class ServiceDiscovery {
                         SDOrderer discoveredAlready = ordererEndpoints.get(endpoint);
                         if (discoveredAlready != null) {
                             if (!mspid.equals(discoveredAlready.getMspid())) {
-                                logger.error(format("Service discovery in channel: %s, peer: %s found Orderer endpoint: %s with two mspids: '%s', '%s'", channelName, serviceDiscoveryPeer, endpoint, mspid, discoveredAlready.getMspid()));
+                                logger.debug(format("Service discovery in channel: %s, peer: %s found Orderer endpoint: %s with two mspids: '%s', '%s'", channelName, serviceDiscoveryPeer, endpoint, mspid, discoveredAlready.getMspid()));
                                 continue; // report it and ignore.
                             }
                             logger.debug(format("Service discovery in channel: %s, peer: %s found Orderer endpoint: %s mspid: %s discovered twice", channelName, serviceDiscoveryPeer, endpoint, mspid));
