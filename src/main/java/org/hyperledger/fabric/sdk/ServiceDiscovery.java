@@ -28,8 +28,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.protobuf.ByteString;
@@ -1304,7 +1305,7 @@ public class ServiceDiscovery {
         return ret.subList(Math.max(ret.size() - required, 0), ret.size());
     }
 
-    private ScheduledFuture<?> seviceDiscovery = null;
+    private ScheduledExecutorService serviceDiscovery = null;
 
     private static final int SERVICE_DISCOVER_FREQ_SECONDS = config.getServiceDiscoveryFreqSeconds();
 
@@ -1314,14 +1315,14 @@ public class ServiceDiscovery {
             return;
         }
 
-        if (seviceDiscovery == null) {
-
-            seviceDiscovery = Executors.newSingleThreadScheduledExecutor(r -> {
+        if (serviceDiscovery == null) {
+            serviceDiscovery = Executors.newSingleThreadScheduledExecutor(r -> {
                 Thread t = Executors.defaultThreadFactory().newThread(r);
                 t.setDaemon(true);
                 return t;
-            }).scheduleAtFixedRate(() -> {
+            });
 
+            serviceDiscovery.scheduleAtFixedRate(() -> {
                 logger.debug(format("Channel %s starting service rediscovery after %d seconds.", channelName, SERVICE_DISCOVER_FREQ_SECONDS));
                 fullNetworkDiscovery(true);
 
@@ -1371,10 +1372,11 @@ public class ServiceDiscovery {
     void shutdown() {
         logger.trace("Service discovery shutdown.");
         try {
-            final ScheduledFuture<?> lseviceDiscovery = seviceDiscovery;
-            seviceDiscovery = null;
-            if (null != lseviceDiscovery) {
-                lseviceDiscovery.cancel(true);
+            final ExecutorService lserviceDiscovery = serviceDiscovery;
+            serviceDiscovery = null;
+
+            if (null != lserviceDiscovery) {
+                lserviceDiscovery.shutdownNow();
             }
         } catch (Exception e) {
             logger.error(e);
