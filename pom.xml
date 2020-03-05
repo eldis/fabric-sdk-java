@@ -533,11 +533,11 @@
 	<distributionManagement>
 		<repository>
 			<id>remote-repository</id>
-			<url>http://nexus.eldissoft.lan/nexus/content/repositories/releases</url>
+			<url>http://nexus.corp.eldis.ru/repository/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>remote-repository</id>
-			<url>http://nexus.eldissoft.lan/nexus/content/repositories/snapshots</url>
+			<url>http://nexus.corp.eldis.ru/repository/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
     <profiles>
